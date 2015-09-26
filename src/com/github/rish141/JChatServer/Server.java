@@ -107,7 +107,7 @@ public class Server extends JFrame{
 			outputStream.flush();
 			appendToChat("\nYOU : " + message);
 		}catch(IOException ioE){
-			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.MAGENTA);
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.RED);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class Server extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-					    appendToPane(chatWindow, text, Color.BLUE);
+					    appendToPane(chatWindow, text, Color.BLACK);
 					}
 				}
 			);
@@ -125,7 +125,7 @@ public class Server extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-					    appendToPane(chatWindow, text, Color.RED);
+					    appendToPane(chatWindow, text, Color.BLUE);
 					}
 				}
 			);
