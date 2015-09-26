@@ -1,3 +1,5 @@
+package com.github.rish141.JChatClient;
+
 import javax.swing.JFrame;
 
 public class ClientTest {

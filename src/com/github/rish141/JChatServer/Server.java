@@ -1,3 +1,5 @@
+package com.github.rish141.JChatServer;
+
 import java.io.*;
 import java.net.*;
 import java.awt.*;
@@ -20,7 +22,7 @@ public class Server extends JFrame{
 		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
-				public void actionPerformed(ActionEvent event){
+				public void actionPerformed(ActionEvent event) {
 					sendMessage(event.getActionCommand());
 					userText.setText("");
 				}
@@ -55,10 +57,10 @@ public class Server extends JFrame{
 	}
 	
 	//wait for connection,then send connection info
-	private void waitForConnection() throws IOException{
+	private void waitForConnection() throws IOException {
 		showMessage("Waiting for Other User to Connect..\n");
 		connection = server.accept();
-		showMessage("Now Connected to "+connection.getInetAddress().getHostName());
+		showMessage("Now Connected to " + connection.getInetAddress().getHostName());
 	}
 	
 	// get Streams to send/recieve msgs
@@ -78,14 +80,14 @@ public class Server extends JFrame{
 			try{
 				message = (String) input.readObject();
 				showMessage("\n"+ message);
-			}catch(ClassNotFoundException classNotFoundException){
+			}catch(ClassNotFoundException classNotFoundException) {
 				showMessage("\n Error OCccured from Other End");
 			}
 		}while(!message.equals("CLIENT - END"));
 	}
 	
 	//close sockets etc
-	private void closeCrap(){
+	private void closeCrap() {
 		showMessage("\n Closing Connection... \n");
 		ableToType(false);
 		try{

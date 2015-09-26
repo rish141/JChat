@@ -1,3 +1,5 @@
+package com.github.rish141.JChatClient;
+
 import java.io.*;
 import java.net.*;
 import java.awt.*;
@@ -22,7 +24,7 @@ public class Client extends JFrame{
 		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
-				public void actionPerformed(ActionEvent event){
+				public void actionPerformed(ActionEvent event) {
 					sendMessage(event.getActionCommand());
 					userText.setText("");
 				}
@@ -37,11 +39,11 @@ public class Client extends JFrame{
 	
 	//connect to Server
 	public void startRunning(){
-		try{
+		try {
 			connectToServer();
 			setupStreams();
 			whileChatting();
-		}catch(EOFException eofE){
+		}catch (EOFException eofE) {
 			showMessage("\n Client Terminated the Connection");
 		}catch(IOException ioE){
 			ioE.printStackTrace();
@@ -51,10 +53,10 @@ public class Client extends JFrame{
 	}
 	
 	//connect to server
-	private void connectToServer() throws IOException{
+	private void connectToServer() throws IOException {
 		showMessage("Attempting Connection...\n");
-		connection = new Socket(InetAddress.getByName(serverIP),5555);
-		showMessage("Connected to : "+connection.getInetAddress().getHostName());
+		connection = new Socket(InetAddress.getByName(serverIP), 5555);
+		showMessage("Connected to : " + connection.getInetAddress().getHostName());
 	}
 	
 	//setup for send/recieve msg
@@ -72,14 +74,14 @@ public class Client extends JFrame{
 			try{
 				message = (String) input.readObject();
 				showMessage("\n"+ message);
-			}catch(ClassNotFoundException cnfE){
+			}catch(ClassNotFoundException cnfE) {
 				showMessage("\n ERROR from the Other Side");
 			}
 		}while(!message.equals("SERVER - END"));
 	}
 	
 	//close streams
-	private void closeCrap(){
+	private void closeCrap() {
 		showMessage("Closing the Connection");
 		ableToType(false);
 		try{

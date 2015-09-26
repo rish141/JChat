@@ -1,0 +1,14 @@
+# Java
+*.class
+*.jar
+
+# IntelliJ project files
+.idea
+*.iml
+out/
+
+# Eclipse
+.settings
+.classpath
+.project
+bin/

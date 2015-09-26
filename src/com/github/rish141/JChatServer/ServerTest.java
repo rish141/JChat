@@ -1,3 +1,5 @@
+package com.github.rish141.JChatServer;
+
 import javax.swing.JFrame;
 
 public class ServerTest {
