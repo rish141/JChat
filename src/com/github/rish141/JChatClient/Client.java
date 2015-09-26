@@ -99,7 +99,7 @@ public class Client extends JFrame{
 			outputStream.flush();
 			appendToChat("\nYOU - " + message);
 		}catch(IOException ioe){
-			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.MAGENTA);
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.RED);
 		}
 	}
 
@@ -107,7 +107,7 @@ public class Client extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						appendToPane(chatWindow, message, Color.BLUE);
+						appendToPane(chatWindow, message, Color.BLACK);
 					}
 				}
 			);
@@ -117,7 +117,7 @@ public class Client extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						appendToPane(chatWindow, message, Color.RED);
+						appendToPane(chatWindow, message, Color.BLUE);
 					}
 				}
 			);
