@@ -95,11 +95,11 @@ public class Client extends JFrame{
 
 	private void sendToServer(String message){
 		try{
-			outputStream.writeObject("CLIENT - " + message);
+			outputStream.writeObject("CLIENT : " + message);
 			outputStream.flush();
 			appendToChat("\nYOU - " + message);
 		}catch(IOException ioe){
-			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.BLUE);
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.MAGENTA);
 		}
 	}
 
@@ -117,7 +117,7 @@ public class Client extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						appendToPane(chatWindow, message, Color.MAGENTA);
+						appendToPane(chatWindow, message, Color.RED);
 					}
 				}
 			);
