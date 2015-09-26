@@ -4,12 +4,18 @@ import java.io.*;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 public class Client extends JFrame{
 
 	private JTextField userText;
-	private JTextArea chatWindow;
+	private JTextPane chatWindow;
 	private ObjectOutputStream outputStream;
 	private ObjectInputStream inputStream;
 	private String message = "";
@@ -30,7 +36,7 @@ public class Client extends JFrame{
 			}
 		);
 		add(userText, BorderLayout.NORTH);
-		chatWindow = new JTextArea();
+		chatWindow = new JTextPane();
 		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
 		setSize(300,150);
 		setVisible(true);
@@ -68,7 +74,7 @@ public class Client extends JFrame{
 		do{
 			try{
 				message = (String) inputStream.readObject();
-				appendToChat("\n" + message);
+				appendToChatServer("\n" + message);
 			}catch(ClassNotFoundException cnfE){
 				appendToChat("\n ERROR from the Other Side");
 			}
@@ -76,7 +82,7 @@ public class Client extends JFrame{
 	}
 
 	private void closeMessageStreams(){
-		appendToChat("Closing the Connection");
+		appendToChat("\nClosing the Connection");
 		ableToType(false);
 		try{
 			outputStream.close();
@@ -93,7 +99,7 @@ public class Client extends JFrame{
 			outputStream.flush();
 			appendToChat("\nCLIENT - " + message);
 		}catch(IOException ioe){
-			chatWindow.append("\n Error while sending your MESSAGE.");
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.BLUE);
 		}
 	}
 
@@ -101,7 +107,17 @@ public class Client extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						chatWindow.append(message);
+						appendToPane(chatWindow, message, Color.BLUE);
+					}
+				}
+			);
+	}
+
+	private void appendToChatServer(final String message){
+		SwingUtilities.invokeLater(
+				new Runnable(){
+					public void run(){
+						appendToPane(chatWindow, message, Color.MAGENTA);
 					}
 				}
 			);
@@ -116,4 +132,19 @@ public class Client extends JFrame{
 			}
 		);		
 	}
+	
+	 private void appendToPane(JTextPane tp, String msg, Color c)
+	    {
+	        StyleContext sc = StyleContext.getDefaultStyleContext();
+	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+
+	        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+	        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+	        int len = tp.getDocument().getLength();
+	        tp.setCaretPosition(len);
+	        tp.setCharacterAttributes(aset, false);
+	        tp.replaceSelection(msg);
+	    }
+
 }
