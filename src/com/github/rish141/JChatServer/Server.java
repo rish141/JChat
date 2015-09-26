@@ -6,10 +6,17 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import javax.swing.border.*;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+
 public class Server extends JFrame{
  
 	private JTextField userText;
-	private JTextArea chatWindow;
+	private JTextPane chatWindow;
 	private ObjectOutputStream outputStream;
 	private ObjectInputStream inputStream;
 	private ServerSocket serverSocket;
@@ -28,7 +35,7 @@ public class Server extends JFrame{
 			}
 		);
 		add(userText, BorderLayout.NORTH);
-		chatWindow = new JTextArea();
+		chatWindow = new JTextPane();
 		add(new JScrollPane(chatWindow));
 		setSize(300,150);
 		setVisible(true);
@@ -75,7 +82,7 @@ public class Server extends JFrame{
 		do{
 			try{
 				message = (String) inputStream.readObject();
-				appendToChat("\n" + message);
+				appendToChatClient("\n" + message);
 			}catch(ClassNotFoundException classNotFoundException){
 				appendToChat("\n Error OCccured from Other End");
 			}
@@ -100,7 +107,7 @@ public class Server extends JFrame{
 			outputStream.flush();
 			appendToChat("\nSERVER : " + message);
 		}catch(IOException ioE){
-			chatWindow.append("\n ERROR WITH SENDING THE MSG");
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.MAGENTA);
 		}
 	}
 
@@ -108,7 +115,17 @@ public class Server extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						chatWindow.append(text);
+					    appendToPane(chatWindow, text, Color.MAGENTA);
+					}
+				}
+			);
+	}
+
+	private void appendToChatClient(final String text){
+		SwingUtilities.invokeLater(
+				new Runnable(){
+					public void run(){
+					    appendToPane(chatWindow, text, Color.BLUE);
 					}
 				}
 			);
@@ -124,5 +141,18 @@ public class Server extends JFrame{
 		);
 	}
 	
+	 private void appendToPane(JTextPane tp, String msg, Color c)
+	    {
+	        StyleContext sc = StyleContext.getDefaultStyleContext();
+	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+
+	        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+	        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+	        int len = tp.getDocument().getLength();
+	        tp.setCaretPosition(len);
+	        tp.setCharacterAttributes(aset, false);
+	        tp.replaceSelection(msg);
+	    }
 	
 }
