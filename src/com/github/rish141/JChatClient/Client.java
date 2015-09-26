@@ -97,7 +97,7 @@ public class Client extends JFrame{
 		try{
 			outputStream.writeObject("CLIENT - " + message);
 			outputStream.flush();
-			appendToChat("\nCLIENT - " + message);
+			appendToChat("\nYOU - " + message);
 		}catch(IOException ioe){
 			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.BLUE);
 		}
