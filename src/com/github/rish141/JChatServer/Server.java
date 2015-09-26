@@ -115,7 +115,7 @@ public class Server extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-					    appendToPane(chatWindow, text, Color.MAGENTA);
+					    appendToPane(chatWindow, text, Color.BLUE);
 					}
 				}
 			);
@@ -125,7 +125,7 @@ public class Server extends JFrame{
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-					    appendToPane(chatWindow, text, Color.BLUE);
+					    appendToPane(chatWindow, text, Color.RED);
 					}
 				}
 			);
