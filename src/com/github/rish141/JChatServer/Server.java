@@ -10,20 +10,19 @@ public class Server extends JFrame{
  
 	private JTextField userText;
 	private JTextArea chatWindow;
-	private ObjectOutputStream output;
-	private ObjectInputStream input;
-	private ServerSocket server;
+	private ObjectOutputStream outputStream;
+	private ObjectInputStream inputStream;
+	private ServerSocket serverSocket;
 	private Socket connection;
-	
-	//constructor
+
 	public Server(){
 		super("JChat:Server");
 		userText = new JTextField();
 		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
-				public void actionPerformed(ActionEvent event) {
-					sendMessage(event.getActionCommand());
+				public void actionPerformed(ActionEvent event){
+					sendToServer(event.getActionCommand());
 					userText.setText("");
 				}
 			}
@@ -34,20 +33,19 @@ public class Server extends JFrame{
 		setSize(300,150);
 		setVisible(true);
 	}
-	
-	//set up and run Server
+
 	public void startRunning(){
 		try{
-			server = new ServerSocket(5555,100);
+			serverSocket = new ServerSocket(5555,100);
 			while(true){
 				try{
 					waitForConnection();
 					setupStreams();
 					whileChatting();
 				}catch(EOFException eofException){
-					showMessage("\n Server ended");
+					appendToChat("\n Server ended");
 				}finally{
-					closeCrap();
+					killConnection();
 				}
 			}
 		}catch(IOException ioException){
@@ -55,63 +53,58 @@ public class Server extends JFrame{
 		}
 		
 	}
-	
-	//wait for connection,then send connection info
-	private void waitForConnection() throws IOException {
-		showMessage("Waiting for Other User to Connect..\n");
-		connection = server.accept();
-		showMessage("Now Connected to " + connection.getInetAddress().getHostName());
+
+	private void waitForConnection() throws IOException{
+		// wait for connection,then send connection info
+		appendToChat("Waiting for Other User to Connect..\n");
+		connection = serverSocket.accept();
+		appendToChat("Now Connected to " + connection.getInetAddress().getHostName());
 	}
-	
-	// get Streams to send/recieve msgs
+
 	private void setupStreams() throws IOException{
-		output = new ObjectOutputStream(connection.getOutputStream());
-		output.flush();
-		input = new ObjectInputStream(connection.getInputStream());
-		showMessage("\n Streams are Setup!\n");
+		outputStream = new ObjectOutputStream(connection.getOutputStream());
+		outputStream.flush();
+		inputStream = new ObjectInputStream(connection.getInputStream());
+		appendToChat("\n Streams are Setup!\n");
 	}
-	
-	// while conversation
+
 	private void whileChatting() throws IOException{
 		String message = "Connected!";
-		sendMessage(message);
+		sendToServer(message);
 		ableToType(true);
 		do{
 			try{
-				message = (String) input.readObject();
-				showMessage("\n"+ message);
-			}catch(ClassNotFoundException classNotFoundException) {
-				showMessage("\n Error OCccured from Other End");
+				message = (String) inputStream.readObject();
+				appendToChat("\n" + message);
+			}catch(ClassNotFoundException classNotFoundException){
+				appendToChat("\n Error OCccured from Other End");
 			}
 		}while(!message.equals("CLIENT - END"));
 	}
-	
-	//close sockets etc
-	private void closeCrap() {
-		showMessage("\n Closing Connection... \n");
+
+	private void killConnection(){
+		appendToChat("\n Closing Connection... \n");
 		ableToType(false);
 		try{
-			output.close();
-			input.close();
+			outputStream.close();
+			inputStream.close();
 			connection.close();
 		}catch(IOException ioException){
 			ioException.printStackTrace();
 		}
 	}
-	
-	// send msg function NOT SHOW
-	private void sendMessage(String message){
+
+	private void sendToServer(String message){
 		try{
-			output.writeObject("SERVER : "+ message);
-			output.flush();
-			showMessage("\nSERVER : "+ message);
+			outputStream.writeObject("SERVER : " + message);
+			outputStream.flush();
+			appendToChat("\nSERVER : " + message);
 		}catch(IOException ioE){
 			chatWindow.append("\n ERROR WITH SENDING THE MSG");
 		}
 	}
-	
-	// update chat window
-	private void showMessage(final String text){
+
+	private void appendToChat(final String text){
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
@@ -120,8 +113,7 @@ public class Server extends JFrame{
 				}
 			);
 	}
-	
-	//user ability to type in box
+
 	private void ableToType(final boolean tof){
 		SwingUtilities.invokeLater(
 			new Runnable(){

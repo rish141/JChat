@@ -10,13 +10,12 @@ public class Client extends JFrame{
 
 	private JTextField userText;
 	private JTextArea chatWindow;
-	private ObjectOutputStream output;
-	private ObjectInputStream input;
+	private ObjectOutputStream outputStream;
+	private ObjectInputStream inputStream;
 	private String message = "";
 	private String serverIP;
 	private Socket connection;
-	
-	//constructor
+
 	public Client(String host){
 		super("JChat:Client");
 		serverIP = host;
@@ -24,8 +23,8 @@ public class Client extends JFrame{
 		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
-				public void actionPerformed(ActionEvent event) {
-					sendMessage(event.getActionCommand());
+				public void actionPerformed(ActionEvent event){
+					sendToServer(event.getActionCommand());
 					userText.setText("");
 				}
 			}
@@ -36,76 +35,69 @@ public class Client extends JFrame{
 		setSize(300,150);
 		setVisible(true);
 	}
-	
-	//connect to Server
+
 	public void startRunning(){
-		try {
+		try{
 			connectToServer();
-			setupStreams();
+			setupMessageStreams();
 			whileChatting();
-		}catch (EOFException eofE) {
-			showMessage("\n Client Terminated the Connection");
+		}catch(EOFException eofE){
+			appendToChat("\n Client Terminated the Connection");
 		}catch(IOException ioE){
 			ioE.printStackTrace();
 		}finally{
-			closeCrap();
+			closeMessageStreams();
 		}
 	}
-	
-	//connect to server
-	private void connectToServer() throws IOException {
-		showMessage("Attempting Connection...\n");
-		connection = new Socket(InetAddress.getByName(serverIP), 5555);
-		showMessage("Connected to : " + connection.getInetAddress().getHostName());
+
+	private void connectToServer() throws IOException{
+		appendToChat("Attempting Connection...\n");
+		connection = new Socket(InetAddress.getByName(serverIP),5555);
+		appendToChat("Connected to : " + connection.getInetAddress().getHostName());
 	}
-	
-	//setup for send/recieve msg
-	private void setupStreams() throws IOException{
-		output = new ObjectOutputStream(connection.getOutputStream());
-		output.flush();
-		input = new ObjectInputStream(connection.getInputStream());
-		showMessage("\n Say Hello!");
+
+	private void setupMessageStreams() throws IOException{
+		outputStream = new ObjectOutputStream(connection.getOutputStream());
+		outputStream.flush();
+		inputStream = new ObjectInputStream(connection.getInputStream());
+		appendToChat("\n Say Hello!");
 	}
-	
-	//while conversation
+
 	private void whileChatting() throws IOException{
 		ableToType(true);
 		do{
 			try{
-				message = (String) input.readObject();
-				showMessage("\n"+ message);
-			}catch(ClassNotFoundException cnfE) {
-				showMessage("\n ERROR from the Other Side");
+				message = (String) inputStream.readObject();
+				appendToChat("\n" + message);
+			}catch(ClassNotFoundException cnfE){
+				appendToChat("\n ERROR from the Other Side");
 			}
 		}while(!message.equals("SERVER - END"));
 	}
-	
-	//close streams
-	private void closeCrap() {
-		showMessage("Closing the Connection");
+
+	private void closeMessageStreams(){
+		appendToChat("Closing the Connection");
 		ableToType(false);
 		try{
-			output.close();
-			input.close();
+			outputStream.close();
+			inputStream.close();
 			connection.close();
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}
 	}
-	
-	//send the msg to server
-	private void sendMessage(String message){
+
+	private void sendToServer(String message){
 		try{
-			output.writeObject("CLIENT - "+ message);
-			output.flush();
-			showMessage("\nCLIENT - "+ message);
+			outputStream.writeObject("CLIENT - " + message);
+			outputStream.flush();
+			appendToChat("\nCLIENT - " + message);
 		}catch(IOException ioe){
 			chatWindow.append("\n Error while sending your MESSAGE.");
 		}
 	}
-	
-	//update chat windows
-	private void showMessage(final String message){
+
+	private void appendToChat(final String message){
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
@@ -114,8 +106,7 @@ public class Client extends JFrame{
 				}
 			);
 	}
-	
-	// ablity to type
+
 	private void ableToType(final boolean tof){
 		SwingUtilities.invokeLater(
 			new Runnable(){
