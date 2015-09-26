@@ -105,7 +105,7 @@ public class Server extends JFrame{
 		try{
 			outputStream.writeObject("SERVER : " + message);
 			outputStream.flush();
-			appendToChat("\nSERVER : " + message);
+			appendToChat("\nYOU : " + message);
 		}catch(IOException ioE){
 			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.MAGENTA);
 		}
