@@ -26,7 +26,6 @@ public class Client extends JFrame{
 		super("JChat:Client");
 		serverIP = host;
 		userText = new JTextField();
-		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent event){
@@ -37,6 +36,7 @@ public class Client extends JFrame{
 		);
 		add(userText, BorderLayout.NORTH);
 		chatWindow = new JTextPane();
+		chatWindow.setEditable(false);
 		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
 		setSize(300,150);
 		setVisible(true);
@@ -56,9 +56,9 @@ public class Client extends JFrame{
 		}
 	}
 
-	private void connectToServer() throws IOException{
+	private void connectToServer() throws IOException {
 		appendToChat("Attempting Connection...\n");
-		connection = new Socket(InetAddress.getByName(serverIP),5555);
+		connection = new Socket(InetAddress.getByName(serverIP), 5555);
 		appendToChat("Connected to : " + connection.getInetAddress().getHostName());
 	}
 
@@ -103,10 +103,10 @@ public class Client extends JFrame{
 		}
 	}
 
-	private void appendToChat(final String message){
+	private void appendToChat(final String message) {
 		SwingUtilities.invokeLater(
-				new Runnable(){
-					public void run(){
+				new Runnable() {
+					public void run() {
 						appendToPane(chatWindow, message, Color.BLACK);
 					}
 				}
@@ -126,7 +126,7 @@ public class Client extends JFrame{
 	private void ableToType(final boolean tof){
 		SwingUtilities.invokeLater(
 			new Runnable(){
-				public void run(){
+				public void run() {
 					userText.setEditable(tof);
 				}
 			}
@@ -135,6 +135,7 @@ public class Client extends JFrame{
 	
 	 private void appendToPane(JTextPane tp, String msg, Color c)
 	    {
+			chatWindow.setEditable(true);
 	        StyleContext sc = StyleContext.getDefaultStyleContext();
 	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
@@ -144,7 +145,8 @@ public class Client extends JFrame{
 	        int len = tp.getDocument().getLength();
 	        tp.setCaretPosition(len);
 	        tp.setCharacterAttributes(aset, false);
-	        tp.replaceSelection(msg);
+			tp.replaceSelection(msg);
+			chatWindow.setEditable(false);
 	    }
 
 }

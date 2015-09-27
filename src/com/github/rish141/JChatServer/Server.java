@@ -6,8 +6,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import javax.swing.border.*;
-
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -27,12 +25,12 @@ public class Server extends JFrame{
 		userText = new JTextField();
 		userText.setEditable(false);
 		userText.addActionListener(
-			new ActionListener(){
-				public void actionPerformed(ActionEvent event){
-					sendToServer(event.getActionCommand());
-					userText.setText("");
+				new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						sendToServer(event.getActionCommand());
+						userText.setText("");
+					}
 				}
-			}
 		);
 		add(userText, BorderLayout.NORTH);
 		chatWindow = new JTextPane();
@@ -113,12 +111,12 @@ public class Server extends JFrame{
 
 	private void appendToChat(final String text){
 		SwingUtilities.invokeLater(
-				new Runnable(){
-					public void run(){
-					    appendToPane(chatWindow, text, Color.BLACK);
+				new Runnable() {
+					public void run() {
+						appendToPane(chatWindow, text, Color.BLACK);
 					}
 				}
-			);
+		);
 	}
 
 	private void appendToChatClient(final String text){
@@ -143,6 +141,7 @@ public class Server extends JFrame{
 	
 	 private void appendToPane(JTextPane tp, String msg, Color c)
 	    {
+			chatWindow.setEditable(true);
 	        StyleContext sc = StyleContext.getDefaultStyleContext();
 	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
@@ -152,7 +151,8 @@ public class Server extends JFrame{
 	        int len = tp.getDocument().getLength();
 	        tp.setCaretPosition(len);
 	        tp.setCharacterAttributes(aset, false);
-	        tp.replaceSelection(msg);
+			tp.replaceSelection(msg);
+			chatWindow.setEditable(false);
 	    }
 	
 }
