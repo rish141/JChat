@@ -4,13 +4,19 @@ import java.io.*;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 public class Client extends JFrame{
 
 	private JTextField userText;
-	private JTextArea chatWindow;
 	private JLabel aboutLabel;
+	private JTextPane chatWindow;
 	private ObjectOutputStream outputStream;
 	private ObjectInputStream inputStream;
 	private String message = "";
@@ -23,7 +29,6 @@ public class Client extends JFrame{
 		serverIP = host;
 
 		userText = new JTextField();
-		userText.setEditable(false);
 		userText.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent event){
@@ -33,8 +38,8 @@ public class Client extends JFrame{
 			}
 		);
 		add(userText, BorderLayout.NORTH);
-
-		chatWindow = new JTextArea();
+		chatWindow = new JTextPane();
+		chatWindow.setEditable(false);
 		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
 
 		aboutLabel = new JLabel("Created by therishabhpandey and shkesar", SwingConstants.RIGHT);
@@ -58,9 +63,9 @@ public class Client extends JFrame{
 		}
 	}
 
-	private void connectToServer() throws IOException{
+	private void connectToServer() throws IOException {
 		appendToChat("Attempting Connection...\n");
-		connection = new Socket(InetAddress.getByName(serverIP),5555);
+		connection = new Socket(InetAddress.getByName(serverIP), 5555);
 		appendToChat("Connected to : " + connection.getInetAddress().getHostName());
 	}
 
@@ -76,7 +81,7 @@ public class Client extends JFrame{
 		do{
 			try{
 				message = (String) inputStream.readObject();
-				appendToChat("\n" + message);
+				appendToChatServer("\n" + message);
 			}catch(ClassNotFoundException cnfE){
 				appendToChat("\n ERROR from the Other Side");
 			}
@@ -84,7 +89,7 @@ public class Client extends JFrame{
 	}
 
 	private void closeMessageStreams(){
-		appendToChat("Closing the Connection");
+		appendToChat("\nClosing the Connection");
 		ableToType(false);
 		try{
 			outputStream.close();
@@ -97,19 +102,29 @@ public class Client extends JFrame{
 
 	private void sendToServer(String message){
 		try{
-			outputStream.writeObject("CLIENT - " + message);
+			outputStream.writeObject("CLIENT : " + message);
 			outputStream.flush();
-			appendToChat("\nCLIENT - " + message);
+			appendToChat("\nYOU - " + message);
 		}catch(IOException ioe){
-			chatWindow.append("\n Error while sending your MESSAGE.");
+			appendToPane(chatWindow, "\n ERROR WITH SENDING THE MSG", Color.RED);
 		}
 	}
 
-	private void appendToChat(final String message){
+	private void appendToChat(final String message) {
+		SwingUtilities.invokeLater(
+				new Runnable() {
+					public void run() {
+						appendToPane(chatWindow, message, Color.BLACK);
+					}
+				}
+			);
+	}
+
+	private void appendToChatServer(final String message){
 		SwingUtilities.invokeLater(
 				new Runnable(){
 					public void run(){
-						chatWindow.append(message);
+						appendToPane(chatWindow, message, Color.BLUE);
 					}
 				}
 			);
@@ -118,10 +133,27 @@ public class Client extends JFrame{
 	private void ableToType(final boolean tof){
 		SwingUtilities.invokeLater(
 			new Runnable(){
-				public void run(){
+				public void run() {
 					userText.setEditable(tof);
 				}
 			}
 		);		
 	}
+	
+	 private void appendToPane(JTextPane tp, String msg, Color c)
+	    {
+			chatWindow.setEditable(true);
+	        StyleContext sc = StyleContext.getDefaultStyleContext();
+	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+
+	        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+	        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+	        int len = tp.getDocument().getLength();
+	        tp.setCaretPosition(len);
+	        tp.setCharacterAttributes(aset, false);
+			tp.replaceSelection(msg);
+			chatWindow.setEditable(false);
+	    }
+
 }
