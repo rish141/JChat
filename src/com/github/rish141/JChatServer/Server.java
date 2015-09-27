@@ -10,6 +10,7 @@ public class Server extends JFrame{
  
 	private JTextField userText;
 	private JTextArea chatWindow;
+	private JLabel aboutLabel;
 	private ObjectOutputStream outputStream;
 	private ObjectInputStream inputStream;
 	private ServerSocket serverSocket;
@@ -17,20 +18,26 @@ public class Server extends JFrame{
 
 	public Server(){
 		super("JChat:Server");
+
 		userText = new JTextField();
 		userText.setEditable(false);
 		userText.addActionListener(
-			new ActionListener(){
-				public void actionPerformed(ActionEvent event){
-					sendToServer(event.getActionCommand());
-					userText.setText("");
+				new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						sendToServer(event.getActionCommand());
+						userText.setText("");
+					}
 				}
-			}
 		);
 		add(userText, BorderLayout.NORTH);
+
 		chatWindow = new JTextArea();
-		add(new JScrollPane(chatWindow));
-		setSize(300,150);
+		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
+
+		aboutLabel = new JLabel("Created by rish141 and shkesar", SwingConstants.RIGHT);
+		add(aboutLabel, BorderLayout.SOUTH);
+
+		setSize(300,450);
 		setVisible(true);
 	}
 
@@ -106,12 +113,12 @@ public class Server extends JFrame{
 
 	private void appendToChat(final String text){
 		SwingUtilities.invokeLater(
-				new Runnable(){
-					public void run(){
-						chatWindow.append(text);
-					}
+			new Runnable(){
+				public void run(){
+					chatWindow.append(text);
 				}
-			);
+			}
+		);
 	}
 
 	private void ableToType(final boolean tof){
@@ -123,6 +130,5 @@ public class Server extends JFrame{
 			}
 		);
 	}
-	
 	
 }

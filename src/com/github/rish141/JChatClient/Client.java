@@ -10,6 +10,7 @@ public class Client extends JFrame{
 
 	private JTextField userText;
 	private JTextArea chatWindow;
+	private JLabel aboutLabel;
 	private ObjectOutputStream outputStream;
 	private ObjectInputStream inputStream;
 	private String message = "";
@@ -18,7 +19,9 @@ public class Client extends JFrame{
 
 	public Client(String host){
 		super("JChat:Client");
+
 		serverIP = host;
+
 		userText = new JTextField();
 		userText.setEditable(false);
 		userText.addActionListener(
@@ -30,9 +33,14 @@ public class Client extends JFrame{
 			}
 		);
 		add(userText, BorderLayout.NORTH);
+
 		chatWindow = new JTextArea();
 		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
-		setSize(300,150);
+
+		aboutLabel = new JLabel("Created by rish141 and shkesar", SwingConstants.RIGHT);
+		add(aboutLabel, BorderLayout.SOUTH);
+
+		setSize(300,450);
 		setVisible(true);
 	}
 
