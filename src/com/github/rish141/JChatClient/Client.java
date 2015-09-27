@@ -37,7 +37,7 @@ public class Client extends JFrame{
 		chatWindow = new JTextArea();
 		add(new JScrollPane(chatWindow), BorderLayout.CENTER);
 
-		aboutLabel = new JLabel("Created by rish141 and shkesar", SwingConstants.RIGHT);
+		aboutLabel = new JLabel("Created by therishabhpandey and shkesar", SwingConstants.RIGHT);
 		add(aboutLabel, BorderLayout.SOUTH);
 
 		setSize(300,450);
